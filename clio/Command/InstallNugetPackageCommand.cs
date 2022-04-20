@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Clio.Common;
+using Clio.Package.NuGet;
 using Clio.Project.NuGet;
 using CommandLine;
 
@@ -23,6 +24,12 @@ namespace Clio.Command
 			Default = "https://www.nuget.org/api/v2")]
 		public string SourceUrl { get; set; }
 
+		[Option("AzurePAT", Required = false, HelpText = "Azure DevOps PAT for private Artifacts NuGet Feed")]
+		public string PersonalAccessToken
+		{
+			get => AzurePAT.PAT;
+			set => AzurePAT.PAT = value;
+		}
 		#endregion
 
 	}

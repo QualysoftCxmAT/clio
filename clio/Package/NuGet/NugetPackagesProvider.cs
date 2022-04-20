@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Clio.Common;
+using Clio.Package.NuGet;
 
 namespace Clio.Project.NuGet
 {
@@ -28,6 +31,12 @@ namespace Clio.Project.NuGet
 		private async Task<string> GetAllVersionsNugetPackagesXml(string nugetSourceUrl, string packageName) {
 			var findPackagesByIdUrl = $"{nugetSourceUrl.TrimEnd('/')}/FindPackagesById()?id='{packageName}'";
 			using var httpClient = new HttpClient();
+
+			if (!string.IsNullOrWhiteSpace(AzurePAT.PAT))
+			{
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($":{AzurePAT.PAT}")));
+			}
+
 			var response = await httpClient.GetAsync(findPackagesByIdUrl);
 			var allVersionsNugetPackagesXml = await response.Content.ReadAsStringAsync();
 			if (!response.IsSuccessStatusCode) {
